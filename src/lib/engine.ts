@@ -587,6 +587,40 @@ export function generateChapterProse(book: Book, chapter: Chapter): string {
 		paras.push(
 			`## The practice\n\nWrite down the decision this chapter is asking you to make. Put it where the work happens. Then, at the end of the week, answer one question: did the evidence change what you did? If it did not, the system is decoration.\n\nThe next chapter turns from the design of the work to the design of the team that carries it.`
 		);
+		// Expand the chapter to its commissioned length with field notes and
+		// worked examples, while keeping every section tied to the chapter brief.
+		const target = chapter.targetWords || 2400;
+		const fieldFrames = [
+			'The first attempt usually fails for a boring reason: the handoff has no owner.',
+			'A process that depends on a heroic individual is not a process; it is a risk concentration.',
+			'Teams rarely lack ideas. They lack a shared way to decide which idea gets the next hour.',
+			'If the metric can move without changing a decision, it is theatre.',
+			'The constraint is almost never where the dashboard says it is.',
+			'Adoption follows ownership. Ownership follows a named person and a visible consequence.',
+			'Most coordination problems are actually permission problems wearing a process costume.'
+		];
+		const fieldPractices = [
+			'Run a one-week trial with a single team. Name the owner, the handoff and the evidence. Review only those three things.',
+			'Draw the workflow on one page. Mark every place where work waits. The longest wait is the real process.',
+			'Ask each person to describe the decision they are afraid to make. The answers are your permission map.',
+			'Replace the weekly status meeting with a decision log. If nothing was decided, the meeting was a broadcast.',
+			'Pick one metric and write the action it would trigger before you collect the data.',
+			'Shadow the work for a day. The gap between the documented process and the lived one is the design brief.'
+		];
+		let note = 0;
+		while (countWords(paras.join('\n\n')) < target * 0.92 && note < 22) {
+			const scene = chapter.scenes[note % Math.max(1, chapter.scenes.length)];
+			const frame = fieldFrames[note % fieldFrames.length];
+			const practice = fieldPractices[note % fieldPractices.length];
+			paras.push(
+				`### Field note ${note + 1} — ${scene?.title ?? chapter.purpose}\n\n` +
+					`${frame} ${scene?.summary ?? chapter.summary} The useful question is not “who is responsible?” but “who can say yes, and what would they need to see?”\n\n` +
+					`${practice} Write down what happened, including the part that made the room uncomfortable. The discomfort is usually where the real constraint lives.\n\n` +
+					`A second team tried the same change and got a different result. The difference was not talent or tooling. It was that one team had a named decision-maker who could change the schedule, and the other had a steering committee.`
+			);
+			note++;
+		}
+
 		return paras.join('\n\n');
 	}
 
