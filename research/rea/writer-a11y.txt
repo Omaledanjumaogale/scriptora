@@ -1,0 +1,6 @@
+- document:
+  - figure:
+    - img "Bot avatar"
+  - text: Hello, I'm Alex from Smith Book, nice to meet you!! Can I show you a new way to make a LOT of money that you may not have known about before you got here?
+  - region "bottom-end Notifications alt+T"
+  - alert

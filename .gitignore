@@ -1,0 +1,15 @@
+node_modules/
+.svelte-kit/
+build/
+.vercel/
+.wrangler/
+.env
+.env.*
+!.env.example
+*.local
+.DS_Store
+coverage/
+dist/
+
+# Research clones are large and not part of the product
+research/repos/

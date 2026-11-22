@@ -1,0 +1,6 @@
+{
+  "browser": {"mode": "launch", "executable_path": "C:/Users/OMALE DANJUMA OGALE/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe", "headless": true},
+  "start_url": {"url": "https://smithbook.com/", "query": []},
+  "actions": [{"step_id": "settle", "action": "wait_for_timeout", "duration_ms": 6000}],
+  "capture": {"at_end": ["url", "dom", "accessibility", "screenshot"], "events": ["console", "page-errors", "network"], "network": {"request_body": false, "response_body": false, "header_values": false}}
+}

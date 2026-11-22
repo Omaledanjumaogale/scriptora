@@ -1,0 +1,245 @@
+- document:
+  - banner:
+    - link "Smith Book":
+      - /url: https://smithbook.com/
+      - img "Smith Book"
+    - navigation:
+      - list:
+        - listitem:
+          - link "HOME":
+            - /url: https://smithbook.com/
+        - listitem:
+          - link "HOW IT WORKS":
+            - /url: https://smithbook.com/howitworks/
+        - listitem:
+          - link "PRICING":
+            - /url: https://smithbook.com/pricing/
+        - listitem:
+          - link "CONTACT":
+            - /url: https://smithbook.com/contact/
+        - listitem:
+          - link "ABOUT":
+            - /url: https://smithbook.com/about/
+        - listitem:
+          - link "FAQ":
+            - /url: https://smithbook.com/faq/
+        - listitem
+  - article:
+    - img "12 (Demo)"
+    - text: Write Your Book with AI Fast, Easy, and Yours to Own Say goodbye to writer’s block. Smithbook turns your idea into a professionally written book in minutes
+    - link "Try it now":
+      - /url: https://writer.smithbook.com/makemybook?utm_campaign=site2025a&utm_adset=TYPEBOTV5&utm_medium=homesite&utm_content=smithbookandcover&utm_source=site
+    - img "2.png"
+    - text: welcome to Smithbook The Easiest Way to Write and Publish a Book
+    - paragraph: Smithbook is an AI-powered platform that helps you write a book with AI, create a professional cover, and publish an ebook easily. Perfect for beginners and experienced authors, you simply enter your idea — and Smithbook turns it into a complete, ready-to-sell book. You own all the rights. We just make the process fast, guided, and stress-free.
+    - text: SMITHBOOK Become successful and start make progress
+    - paragraph: Even if you’ve never written anything before, Smithbook’s AI book generator helps anyone create and publish a book easily – even first-time authors. Here are some of the standout IA that make this possible
+    - text: OUR FEATURES How it works
+    - paragraph: Fast, Easy, and Yours
+    - text: 1 - Tell Robert Your Idea
+    - paragraph: Use our smart AI assistant to describe your book topic, genre, or purpose.
+    - link "read more":
+      - /url: https://writer.smithbook.com/makemybook?utm_campaign=site2025a&utm_adset=TYPEBOTV5&utm_medium=homesite&utm_content=smithbookandcover&utm_source=site
+    - text: 2 - Generate Your Book Instantly
+    - paragraph: Smithbook writes your book — structured, fluent, and formatted.
+    - link "read more":
+      - /url: https://writer.smithbook.com/makemybook?utm_campaign=site2025a&utm_adset=TYPEBOTV5&utm_medium=homesite&utm_content=smithbookandcover&utm_source=site
+    - text: 3 - Design Your Cover & Export
+    - paragraph: Pick a stunning cover or let our AI create one. Then download your ebook and publish it anywhere
+    - link "read more":
+      - /url: https://writer.smithbook.com/makemybook?utm_campaign=site2025a&utm_adset=TYPEBOTV5&utm_medium=homesite&utm_content=smithbookandcover&utm_source=site
+    - text: 0 + Created Books 0 + Countries 0 + Happy Writers CULTIVATING NEW IDEAS 3 Steps to a success product business
+    - paragraph: "Turn your knowledge into income with Smithbook. Whether you’re writing about health, faith, or personal growth, here’s how to build a successful book-based business in just three steps:"
+    - paragraph:
+      - strong: 1. Create Your Book with AI
+      - text: Use Smithbook’s AI book generator to transform your ideas into a complete, professional-quality manuscript — no writing experience needed.
+    - paragraph:
+      - strong: 2. Design a Stunning Cover
+      - text: Let our AI cover creator give your book the polished, eye-catching look it needs to stand out on Amazon, Kindle, and beyond.
+    - paragraph:
+      - strong: 3. Publish and Profit
+      - text: Export your finished book and start selling on top platforms. Grow your audience, build credibility, and earn income — all from a product you own 100%.
+    - text: ROADMAP The hardest part of starting up is starting out! In the Beginning
+    - paragraph: We started by creating books using AI, revolutionizing the way stories are written and shared
+    - text: After that and now
+    - paragraph: We realized the importance of designing book covers with AI, enhancing the visual appeal of each creation
+    - text: In the future
+    - paragraph: We aim to build a complete ecosystem, bringnin together IA driven content creation and design for a seamless experience
+    - text: MEET THE TEAM Team you want to work with Sara Designer
+    - link:
+      - /url: "#"
+    - text: Robert Writer
+    - link:
+      - /url: "#"
+    - text: Mark Comercial
+    - link:
+      - /url: "#"
+    - link "Smith Book":
+      - /url: https://smithbook.com/wp-content/uploads/2025/07/WhatsApp-Image-2025-07-02-at-20.23.54.jpeg
+      - img
+      - text: Smith Book
+    - link "Other AIs Book":
+      - /url: https://smithbook.com/wp-content/uploads/2025/07/WhatsApp-Image-2025-07-02-at-20.23.54-1.jpeg
+      - img
+      - text: Other AIs Book
+    - text: POWER YOUR BOOK Human-Quality Writing, AI Speed
+    - paragraph: Our books don’t just look professional — they read like they were written by a real author. Smithbook’s AI generates natural, flowing content that consistently passes AI detection tests. That means your book comes out original, authentic, and indistinguishable from human writing. No awkward phrases, no robotic tone — just quality storytelling that feels real from start to finish.
+    - text: WHY CHOOSE US Features
+    - paragraph: "Even if you’ve never written anything before, Smithbook’s AI book generator helps anyone create and publish a book easily – even first-time authors. Here are some of the standout features that make this possible:"
+    - text: AI Book Generator
+    - paragraph: Smithbook’s advanced AI turns your idea into a full book
+    - link:
+      - /url: "#"
+    - text: Automatic Cover Design
+    - paragraph: AI instantly designs a unique, professional book cover
+    - link:
+      - /url: "#"
+    - text: Instant Delivery
+    - paragraph: creating a book easy and stress-free delivers your book in minutes
+    - link:
+      - /url: "#"
+    - text: You Own Your Book
+    - paragraph: Smithbook turns your idea into a book, but you keep full ownership
+    - link:
+      - /url: "#"
+    - text: TESTIMONIALS What clients are saying about us
+    - paragraph
+    - paragraph:
+      - text: Smithbook’s easy‑to‑use platform, fast delivery, and outstanding results have
+      - strong: won the trust of our customers
+      - text: . But don’t just take our word for it –
+      - strong: hear what our users have to say
+      - text: . Their real stories prove how we deliver a friendly, professional service
+      - strong: that you can count on
+      - text: .
+    - iframe
+    - text: PRICE & PLANS Choose the Plan That Best Suits Your Needs
+    - paragraph: Whether you’re a first-time author or an experienced publisher, we have a plan tailored to your goals. Each option leverages our AI-driven book writing platform to help you create and publish high-quality content effortlessly.
+    - text: Single Book $19 One Time
+    - img
+    - figure: 1 fully personalized book
+    - figure: 100+ professionally written pages
+    - figure: Delivered in under 1 hour
+    - figure: You define the topic, tone, and style
+    - figure: Ready to publish, sell, or share (Amazon, Google Play, Apple Books)
+    - figure: Full ownership — 100% yours
+    - figure: Includes .DOC (editable) and .PDF (ready-to-read)
+    - link "Buy Now":
+      - /url: https://writer.smithbook.com/makemybook?utm_campaign=site2025a&utm_adset=TYPEBOTV5&utm_medium=homesite&utm_content=smithbookandcover&utm_source=site
+    - text: Triple Pack $19 Per Month
+    - img
+    - figure: 3 fully personalized books
+    - figure: 100+ pages per book
+    - figure: Delivered in under 1 hour
+    - figure: You define the topic, tone, and style
+    - figure: Ready to publish, sell, or share (Amazon, Google Play, Apple Books)
+    - figure: Full ownership — 100% yours
+    - figure: Includes .DOC (editable) and .PDF (ready-to-read)
+    - figure: BONUS
+    - figure: "Access to your private member area: Triple Club Access"
+    - figure: "Welcome Guide: Triple Pack Welcome PDF"
+    - link "Subscribe":
+      - /url: https://pay.smithbook.com/triple_club
+    - text: Daily Club $49 Per Month
+    - img
+    - figure: Up to 31 fully personalized books (1 per day)
+    - figure: Up to 186 book covers (6 per day)
+    - figure: 100+ pages per book
+    - figure: Delivered in under 1 hour
+    - figure: You define the topic, tone, and style
+    - figure: Ready to publish, sell, or share (Amazon, Google Play, Apple Books)
+    - figure: Full ownership — 100% yours
+    - figure: Includes .DOC (editable) and .PDF (ready-to-read)
+    - figure: "Bonus:"
+    - figure: "Access to your private member area: Daily Club Access"
+    - figure: "Welcome Guide: Daily Club Welcome PDF"
+    - figure: "Covers Bonus:"
+    - figure: 6 professional cover designs per day — up to 186 per month!
+    - figure: Save time and money with ready-to-use, high-impact visuals for every book.
+    - link "Join Now":
+      - /url: https://pay.smithbook.com/daily_club
+    - text: Frequently Asked Questions Get all the important answers from here
+    - heading "📚 How to write your books?" [level=4]:
+      - link "📚 How to write your books?":
+        - /url: "#section-24b80f0-1"
+        - img "📚"
+        - text: How to write your books?
+    - paragraph: It’s super easy! You tell us the topic, tone, style, and any specific ideas or vision you have. Then our AI takes care of the heavy lifting—delivering a professionally written, 100+ page book in under 1 hour.
+    - heading "💡 How to get ideas for your books?" [level=4]:
+      - link "💡 How to get ideas for your books?":
+        - /url: "#section-24b80f0-2"
+        - img "💡"
+        - text: How to get ideas for your books?
+    - heading "💼 How to sell your books?" [level=4]:
+      - link "💼 How to sell your books?":
+        - /url: "#section-24b80f0-3"
+        - img "💼"
+        - text: How to sell your books?
+    - heading "🛒 How to publish my books for sale?" [level=4]:
+      - link "🛒 How to publish my books for sale?":
+        - /url: "#section-24b80f0-4"
+        - img "🛒"
+        - text: How to publish my books for sale?
+    - heading "🤖 Does the AI write everything by itself?" [level=4]:
+      - link "🤖 Does the AI write everything by itself?":
+        - /url: "#section-24b80f0-5"
+        - img "🤖"
+        - text: Does the AI write everything by itself?
+    - heading "📜 Do I own the copyright?" [level=4]:
+      - link "📜 Do I own the copyright?":
+        - /url: "#section-24b80f0-6"
+        - img "📜"
+        - text: Do I own the copyright?
+    - heading "🎓 Is it good for academic or technical books?" [level=4]:
+      - link "🎓 Is it good for academic or technical books?":
+        - /url: "#section-24b80f0-7"
+        - img "🎓"
+        - text: Is it good for academic or technical books?
+    - link "more questions":
+      - /url: https://smithbook.com/FAQ/
+    - text: BLOG AND NEWS Get every single updates
+  - contentinfo:
+    - list:
+      - listitem:
+        - link "Social-facebook ":
+          - /url: https://www.facebook.com/SmithBook.ia
+      - listitem:
+        - link "Linkedin":
+          - /url: https://www.linkedin.com/company/smithbook
+          - text: Linkedin
+          - img
+      - listitem:
+        - link "Instagram":
+          - /url: https://www.instagram.com/smithbook.creator/
+          - text: Instagram
+          - img
+      - listitem:
+        - link "Youtube":
+          - /url: https://www.youtube.com/@SmithBook.ia-youtube
+          - text: Youtube
+          - img
+    - paragraph: © 2025 SMITHBOOK
+    - text: OUR ADRESS
+    - list:
+      - listitem: 5728 MAJOR BLVD – SUITE 609
+      - listitem: Orlando, FL-32819
+      - listitem: United States
+    - text: OUR CONTACTS
+    - list:
+      - listitem: "Phone: +1 916-875-2235"
+      - listitem: "Whatsapp: +1 407 600 6531"
+      - listitem: "E-mail: contact@smithbook.com"
+    - text: PAGES
+    - link "CONTACT":
+      - /url: https://smithbook.com/contact/
+    - link "PRICING":
+      - /url: https://smithbook.com/pricing
+    - link "PRIVACY POLICY":
+      - /url: https://smithbook.com/privacypolicy/
+    - link "TERMS OF SERVICE":
+      - /url: https://smithbook.com/termsofservice/
+  - link "en English":
+    - /url: "#"
+    - img "en"
+    - text: English
+  - text: desktop
