@@ -15,6 +15,38 @@ export type PipelineKind =
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/** Live AGNES generation through the server proxy; returns null when unavailable. */
+export async function generateChapterLive(
+	book: Book,
+	chapter: { number: number; title: string; summary: string; purpose?: string; targetWords: number },
+	voice?: string
+): Promise<{ text: string; model: string } | null> {
+	try {
+		const res = await fetch('/api/ai/chapter', {
+			method: 'POST',
+			credentials: 'same-origin',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				bookTitle: book.title,
+				genre: book.genre,
+				audience: book.audience,
+				chapterTitle: chapter.title,
+				summary: chapter.summary,
+				purpose: chapter.purpose ?? '',
+				targetWords: Math.round(chapter.targetWords * 0.92),
+				voice
+			})
+		});
+		const data = (await res.json()) as { text?: string; model?: string; fallback?: boolean; error?: string };
+		if (!res.ok || data.fallback || !data.text) {
+			return null;
+		}
+		return { text: data.text, model: data.model ?? 'agnes-3.0-flash' };
+	} catch {
+		return null;
+	}
+}
+
 function stepNames(kind: PipelineKind, book: Book): string[] {
 	switch (kind) {
 		case 'full-book':
@@ -136,18 +168,31 @@ async function execute(runId: string, bookId: string, kind: PipelineKind, option
 						studio.appendLog(runId, `Scene architecture mapped: ${book.chapters.length * 3} scenes, 8-step circuit each.`, 'ok');
 					}
 					if (i === 4) {
+						const useLive = Boolean(studio.session);
+						if (useLive) studio.appendLog(runId, `AGNES ${book.config.model} engaged for prose generation.`, 'info');
 						for (const chapter of book.chapters) {
-							chapter.content = generateChapterProse(book, chapter);
-							chapter.wordCount = countWords(chapter.content);
+							let text = '';
+							let model = MODEL_BY_KIND[kind];
+							if (useLive) {
+								const live = await generateChapterLive(book, chapter, book.config.styleAnchor.slice(0, 400));
+								if (live) {
+									text = live.text;
+									model = live.model;
+								}
+							}
+							if (!text) text = generateChapterProse(book, chapter);
+							chapter.content = text;
+							chapter.wordCount = countWords(text);
 							chapter.status = 'drafted';
 							chapter.scenes = chapter.scenes.map((s) => ({ ...s, status: 'drafted' }));
 							totalWords += chapter.wordCount;
-							studio.updateRun(runId, { progress: Math.round(((i + (chapter.number / book.chapters.length)) / run.steps.length) * 100) });
-							studio.appendLog(runId, `Ch ${chapter.number} “${chapter.title}” drafted · ${chapter.wordCount.toLocaleString()} words`, 'ok');
+							studio.updateRun(runId, { progress: Math.round(((i + (chapter.number / book.chapters.length)) / run.steps.length) * 100), model });
+							studio.appendLog(runId, `Ch ${chapter.number} “${chapter.title}” drafted · ${chapter.wordCount.toLocaleString()} words${useLive ? ' · AGNES' : ''}`, 'ok');
 							await sleep(120 / speed);
 						}
+						recountBook(book);
 						book.stage = 'drafting';
-						step.detail = `${totalWords.toLocaleString()} words across ${book.chapters.length} chapters`;
+						step.detail = `${totalWords.toLocaleString()} words across ${book.chapters.length} chapters${useLive ? ' · AGNES' : ' · deterministic'}`;
 					}
 					if (i === 5) {
 						book.craft = analyzeCraft(book);

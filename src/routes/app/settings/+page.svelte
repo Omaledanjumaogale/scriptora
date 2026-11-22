@@ -4,8 +4,9 @@ import { download } from '$lib/export';
 import Icon from '$lib/components/Icon.svelte';
 import PageHeader from '$lib/components/PageHeader.svelte';
 import Avatar from '$lib/components/Avatar.svelte';
+import { SITE, OAUTH_CALLBACKS } from '$lib/config';
 
-let tab = $state<'profile' | 'workspace' | 'providers' | 'team' | 'data'>('profile');
+let tab = $state<'profile' | 'workspace' | 'providers' | 'integrations' | 'team' | 'data'>('profile');
 let name = $state(studio.user?.name ?? '');
 let email = $state(studio.user?.email ?? '');
 let wsName = $state(studio.state.workspace.name);
@@ -66,14 +67,14 @@ function resetDemo() {
 
 <svelte:head><title>Settings — Scriptora</title></svelte:head>
 
-<PageHeader eyebrow="Workspace" title="Settings" description="Identity, providers, team and data controls. Secrets are not stored in this demo build; connect real providers through a server-side secret manager.">
+<PageHeader eyebrow="Workspace" title="Settings" description="Identity, providers, live stack, team and data controls. Provider keys stay server-side; the browser only sees presence and workspace state.">
 	{#if saved}<span class="chip chip-success"><Icon name="check" size={11} /> Saved</span>{/if}
 	<button class="btn btn-primary" onclick={saveProfile}>Save changes</button>
 </PageHeader>
 
 <div class="grid gap-5 lg:grid-cols-[190px_1fr]">
 	<nav class="flex gap-1 overflow-x-auto lg:flex-col">
-		{#each [['profile', 'Profile', 'users'], ['workspace', 'Workspace', 'grid'], ['providers', 'Providers', 'server'], ['team', 'Team', 'users'], ['data', 'Data & privacy', 'shield']] as [k, l, icon]}
+		{#each [['profile', 'Profile', 'users'], ['workspace', 'Workspace', 'grid'], ['providers', 'Providers', 'server'], ['integrations', 'Live stack', 'sparkles'], ['team', 'Team', 'users'], ['data', 'Data & privacy', 'shield']] as [k, l, icon]}
 			<button class="nav-link whitespace-nowrap {tab === k ? 'active' : ''}" onclick={() => (tab = k as typeof tab)}><Icon name={icon} size={15} />{l}</button>
 		{/each}
 	</nav>
@@ -168,6 +169,70 @@ function resetDemo() {
 					{#each [['Drafting', 'studio-prose-1'], ['Editing', 'studio-editor-1'], ['Research', 'studio-research-1'], ['Design', 'studio-design-1'], ['Fallback', 'claude-sonnet-4-5']] as [k, v]}
 						<div class="flex items-center justify-between"><span class="text-faint">{k}</span><span class="mono text-muted">{v}</span></div>
 					{/each}
+				</div>
+			</div>
+		{:else if tab === 'integrations'}
+			<div id="integrations" class="card p-5">
+				<div class="flex flex-wrap items-start justify-between gap-3">
+					<div>
+						<h2 class="font-display text-[19px] text-ink">Live stack</h2>
+						<p class="mt-0.5 text-[10.5px] text-faint">Demo catalogue stays usable; live Convex data replaces it as soon as a workspace state is saved.</p>
+					</div>
+					<span class="chip {studio.syncStatus === 'live' ? 'chip-teal' : studio.syncStatus === 'offline' ? '!border-danger/30 !text-danger' : 'chip-gold'} !text-[9px]">
+						{studio.syncStatus === 'live' ? 'Live' : studio.syncStatus === 'saving' ? 'Syncing' : studio.syncStatus === 'connecting' ? 'Connecting' : studio.syncStatus === 'offline' ? 'Offline' : 'Demo data'}
+					</span>
+				</div>
+				<div class="mt-4 grid gap-2 sm:grid-cols-2">
+					{#each [
+						['Convex', SITE.convexUrl.replace('https://', ''), 'State + HTTP actions'],
+						['AGNES AI', 'agnes-3.0-flash', 'Server-side generation'],
+						['Resend', 'no-reply@ewinproject.org', 'Transactional email'],
+						['E-WIN hub', 'ewinproject.org', 'Ecosystem registration'],
+						['Cloudflare Pages', 'scriptora.ewinproject.org', 'Edge delivery'],
+						['R2 assets', 'scriptora-assets', 'Covers + exports']
+					] as [name, value, detail]}
+						<div class="rounded-lg border border-line bg-white/[0.02] px-3 py-2.5">
+							<div class="flex items-center justify-between gap-2">
+								<p class="text-[11px] font-medium text-ink">{name}</p>
+								<span class="h-1.5 w-1.5 rounded-full bg-teal"></span>
+							</div>
+							<p class="mono mt-0.5 truncate text-[9.5px] text-muted">{value}</p>
+							<p class="mt-0.5 text-[9px] text-faint">{detail}</p>
+						</div>
+					{/each}
+				</div>
+				{#if studio.syncError}<p class="mt-3 rounded-md border border-danger/25 bg-danger/10 px-3 py-2 text-[10.5px] text-danger">{studio.syncError}</p>{/if}
+				<div class="mt-4 flex flex-wrap items-center gap-2 rounded-lg border border-line bg-white/[0.02] p-3">
+					<div class="min-w-0 flex-1">
+						<p class="text-[10px] uppercase tracking-[0.1em] text-faint">Signed-in workspace</p>
+						{#if studio.session}
+							<p class="mt-0.5 truncate text-[11px] text-ink">{studio.session.name} · {studio.session.email}</p>
+							<p class="mono truncate text-[9px] text-faint">{studio.session.workspaceKey} via {studio.session.provider}</p>
+						{:else}
+							<p class="mt-0.5 text-[11px] text-muted">No live session — data is local to this browser.</p>
+						{/if}
+					</div>
+					{#if studio.session}
+						<button class="btn btn-secondary btn-sm" onclick={() => { studio.logout(); studio.notify('Signed out of the live workspace'); }}>Sign out</button>
+					{:else}
+						<a class="btn btn-primary btn-sm" href="/api/auth/google">Connect Google</a>
+						<a class="btn btn-secondary btn-sm" href="/api/auth/github">Connect GitHub</a>
+					{/if}
+				</div>
+				<div class="mt-4 grid gap-2 sm:grid-cols-2">
+					<div class="rounded-lg border border-line bg-white/[0.02] px-3 py-2.5">
+						<p class="text-[9px] uppercase tracking-[0.1em] text-faint">Google callback</p>
+						<p class="mono mt-0.5 break-all text-[9.5px] text-muted">{OAUTH_CALLBACKS.google}</p>
+					</div>
+					<div class="rounded-lg border border-line bg-white/[0.02] px-3 py-2.5">
+						<p class="text-[9px] uppercase tracking-[0.1em] text-faint">GitHub callback</p>
+						<p class="mono mt-0.5 break-all text-[9.5px] text-muted">{OAUTH_CALLBACKS.github}</p>
+					</div>
+				</div>
+				<div class="mt-4 flex flex-wrap gap-2">
+					<a class="btn btn-secondary btn-sm" href="/admin"><Icon name="shield" size={13} /> Super admin console</a>
+					<a class="btn btn-ghost btn-sm" href="/api/health" target="_blank"><Icon name="activity" size={13} /> Runtime health</a>
+					<a class="btn btn-ghost btn-sm" href={SITE.ewinEcosystem} target="_blank" rel="noreferrer"><Icon name="arrow-up-right" size={13} /> E-WIN ecosystem</a>
 				</div>
 			</div>
 		{:else if tab === 'team'}

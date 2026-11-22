@@ -264,6 +264,9 @@ export interface AppState {
 	activity: Activity[];
 	onboarded: boolean;
 	createdAt: string;
+	updatedAt?: string;
+	syncKey?: string;
+	source?: 'seed' | 'mock' | 'live' | 'imported';
 }
 
 export interface ConceptInput {

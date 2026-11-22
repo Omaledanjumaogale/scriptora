@@ -146,6 +146,23 @@ export default defineSchema({
 		.index('by_workspace', ['workspaceId'])
 		.index('by_book', ['bookId']),
 
+	/**
+	 * Live sync document for the scriptable studio. The demo can run entirely
+	 * client-side; this table holds the authoritative workspace snapshot once a
+	 * signed-in member or the super admin saves it.
+	 */
+	studioStates: defineTable({
+		workspaceKey: v.string(),
+		userEmail: v.string(),
+		state: v.any(),
+		schemaVersion: v.number(),
+		source: v.union(v.literal('seed'), v.literal('live'), v.literal('imported')),
+		createdAt: v.string(),
+		updatedAt: v.string()
+	})
+		.index('by_workspace', ['workspaceKey'])
+		.index('by_user', ['userEmail']),
+
 	invites: defineTable({
 		workspaceId: v.id('workspaces'),
 		email: v.string(),

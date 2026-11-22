@@ -15,13 +15,13 @@ onMount(() => {
 });
 
 $effect(() => {
-	if (!mounted) return;
+	if (!mounted || !studio.authResolved) return;
 	if (!studio.authed) goto('/login');
 	else if (!studio.state.onboarded) goto('/onboarding');
 });
 </script>
 
-{#if mounted && studio.hasAccess}
+{#if mounted && studio.authResolved && studio.hasAccess}
 	<AppShell>
 		{@render children()}
 	</AppShell>

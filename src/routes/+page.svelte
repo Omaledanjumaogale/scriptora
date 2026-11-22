@@ -4,6 +4,7 @@ import BookCover from '$lib/components/BookCover.svelte';
 import Icon from '$lib/components/Icon.svelte';
 import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
+import { SITE } from '$lib/config';
 
 let menuOpen = $state(false);
 let demoBook = $state<'cartographer' | 'attention' | 'salthouse'>('cartographer');
@@ -365,12 +366,13 @@ function enterDemo() {
 				<span class="font-display text-[17px]">Scriptora</span>
 			</div>
 			<p class="text-[11px] text-faint">The enterprise publishing studio. Harmonized from open book-generation systems, rebuilt as one governed pipeline.</p>
-			<div class="flex gap-5 text-[11px] text-muted sm:ml-auto">
+			<div class="flex flex-wrap gap-5 text-[11px] text-muted sm:ml-auto">
 				<a href="#platform" class="hover:text-ink">Platform</a>
 				<a href="#pricing" class="hover:text-ink">Pricing</a>
 				<a href="/login" class="hover:text-ink">Sign in</a>
+				<a href={SITE.ewinEcosystem} class="hover:text-gold" target="_blank" rel="noreferrer">E-WIN ecosystem ↗</a>
 			</div>
 		</div>
-		<div class="border-t border-line px-5 py-4 text-center text-[10px] text-faint">© 2026 Scriptora Labs. Demo build — billing and AI providers are simulated locally.</div>
+		<div class="border-t border-line px-5 py-4 text-center text-[10px] text-faint">© 2026 Scriptora · Part of the <a class="text-muted hover:text-gold" href={SITE.ewinHub} target="_blank" rel="noreferrer">E-WIN Project Ecosystem</a> · Live Convex state, AGNES generation and Cloudflare edge delivery.</div>
 	</footer>
 </div>

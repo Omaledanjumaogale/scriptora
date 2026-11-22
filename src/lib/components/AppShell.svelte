@@ -39,6 +39,26 @@ function go(href: string) {
 }
 
 const unread = $derived(studio.activity.filter((a) => a.kind === 'agent').length);
+const syncLabel = $derived(
+	studio.syncStatus === 'live'
+		? 'Live'
+		: studio.syncStatus === 'saving'
+			? 'Syncing'
+			: studio.syncStatus === 'offline'
+				? 'Offline'
+				: studio.syncStatus === 'connecting'
+					? 'Connecting'
+					: 'Demo'
+);
+const syncTone = $derived(
+	studio.syncStatus === 'live'
+		? 'text-teal'
+		: studio.syncStatus === 'saving' || studio.syncStatus === 'connecting'
+			? 'text-gold'
+			: studio.syncStatus === 'offline'
+				? 'text-red-300'
+				: 'text-faint'
+);
 </script>
 
 <div class="min-h-screen bg-canvas text-ink">
@@ -188,7 +208,16 @@ const unread = $derived(studio.activity.filter((a) => a.kind === 'agent').length
 			</div>
 
 			<button
-				class="ml-auto flex h-9 w-full max-w-[300px] items-center gap-2 rounded-lg border border-line bg-white/[0.025] px-3 text-[12px] text-faint transition hover:border-line-strong"
+				class="ml-auto hidden items-center gap-1.5 rounded-full border border-line bg-white/[0.02] px-2.5 py-1.5 text-[9.5px] uppercase tracking-[0.08em] transition hover:border-line-strong sm:flex"
+				title={studio.syncError || (studio.session ? `Signed in as ${studio.session.email}` : 'Local demo data')}
+				onclick={() => go('/app/settings#integrations')}
+			>
+				<span class="h-1.5 w-1.5 rounded-full {studio.syncStatus === 'live' ? 'bg-teal' : studio.syncStatus === 'offline' ? 'bg-red-400' : 'bg-gold'}"></span>
+				<span class={syncTone}>{syncLabel}</span>
+			</button>
+
+			<button
+				class="flex h-9 w-full max-w-[300px] items-center gap-2 rounded-lg border border-line bg-white/[0.025] px-3 text-[12px] text-faint transition hover:border-line-strong sm:ml-2"
 				onclick={() => (studio.commandOpen = true)}
 			>
 				<Icon name="search" size={14} />

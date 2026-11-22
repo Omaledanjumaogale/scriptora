@@ -13,3 +13,7 @@ dist/
 
 # Research clones are large and not part of the product
 research/repos/
+.env.local
+.dev.vars
+.convex/
+convex/_generated/

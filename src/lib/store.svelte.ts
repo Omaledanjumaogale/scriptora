@@ -17,6 +17,15 @@ import type { Activity, AgentRun, AppState, Book, Chapter, User } from './types'
 
 const KEY = 'scriptora.workspace.v1';
 
+export type SyncStatus = 'mock' | 'connecting' | 'live' | 'saving' | 'offline';
+export type LiveSession = {
+	email: string;
+	name: string;
+	avatar?: string;
+	provider: 'google' | 'github';
+	workspaceKey: string;
+};
+
 type BriefInput = {
 	title: string;
 	genre: string;
@@ -33,6 +42,13 @@ class StudioStore {
 	sidebarOpen = $state(false);
 	commandOpen = $state(false);
 	toast = $state<{ message: string; kind: 'success' | 'error' | 'info' } | null>(null);
+	syncStatus = $state<SyncStatus>('mock');
+	syncError = $state('');
+	session = $state<LiveSession | null>(null);
+	authResolved = $state(false);
+
+	private syncTimer: ReturnType<typeof setTimeout> | null = null;
+	private suppressSync = false;
 
 	init() {
 		if (!browser || this.ready) return;
@@ -44,15 +60,151 @@ class StudioStore {
 		}
 		this.ready = true;
 		document.documentElement.classList.add('dark');
+		void this.bootstrapLive();
 	}
 
-	persist() {
+	private async bootstrapLive() {
+		if (!browser) return;
+		this.syncStatus = 'connecting';
+		try {
+			const res = await fetch('/api/auth/session', { credentials: 'same-origin' });
+			if (!res.ok) throw new Error('Session endpoint unavailable');
+			const data = (await res.json()) as {
+				authenticated: boolean;
+				user?: { email: string; name: string; avatar?: string; provider: 'google' | 'github'; workspaceKey: string };
+			};
+			if (!data.authenticated || !data.user) {
+				this.syncStatus = 'mock';
+				return;
+			}
+			this.session = data.user;
+			this.applySessionIdentity();
+			await this.pullRemote();
+		} catch (error) {
+			this.syncStatus = 'mock';
+			this.syncError = error instanceof Error ? error.message : 'Live sync unavailable';
+		} finally {
+			this.authResolved = true;
+		}
+	}
+
+	private applySessionIdentity() {
+		if (!this.session) return;
+		const initials =
+			this.session.name
+				.split(' ')
+				.filter(Boolean)
+				.map((part) => part[0])
+				.join('')
+				.slice(0, 2)
+				.toUpperCase() || 'SC';
+		this.state.user = {
+			id: `user-${this.session.email.split('@')[0]}`,
+			name: this.session.name,
+			email: this.session.email,
+			role: 'owner',
+			initials,
+			avatarHue: 38
+		};
+	}
+
+	private async pullRemote() {
+		if (!browser || !this.session) return;
+		this.syncStatus = 'connecting';
+		try {
+			const res = await fetch('/api/state', { credentials: 'same-origin' });
+			const data = (await res.json()) as {
+				mode: 'mock' | 'empty' | 'live' | 'offline';
+				state?: AppState | null;
+				workspaceKey?: string;
+				updatedAt?: string;
+				source?: 'seed' | 'live' | 'imported';
+				error?: string;
+			};
+			if (data.mode === 'live' && data.state) {
+				this.suppressSync = true;
+				this.state = {
+					...data.state,
+					user: this.state.user,
+					syncKey: data.workspaceKey,
+					source: 'live',
+					updatedAt: data.updatedAt ?? data.state.updatedAt
+				};
+				this.suppressSync = false;
+				this.saveLocal();
+				this.syncStatus = 'live';
+				this.syncError = '';
+				this.addActivity({
+					kind: 'edit',
+					title: 'Live workspace synchronized',
+					detail: `Convex state ${data.workspaceKey ?? ''} loaded · ${this.state.books.length} books`
+				});
+				this.saveLocal();
+				return;
+			}
+			if (data.mode === 'empty' && data.workspaceKey) {
+				this.state.syncKey = data.workspaceKey;
+				this.state.source = 'seed';
+				this.state.updatedAt = new Date().toISOString();
+				await this.pushRemote('seed');
+				return;
+			}
+			this.syncStatus = data.mode === 'offline' ? 'offline' : 'mock';
+			this.syncError = data.error ?? '';
+		} catch (error) {
+			this.syncStatus = 'offline';
+			this.syncError = error instanceof Error ? error.message : 'Live sync unavailable';
+		}
+	}
+
+	private async pushRemote(source: 'seed' | 'live' | 'imported' = 'live') {
+		if (!browser || !this.session) return;
+		this.syncStatus = 'saving';
+		try {
+			const res = await fetch('/api/state', {
+				method: 'POST',
+				credentials: 'same-origin',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ state: this.state, source: this.session ? source : 'seed' })
+			});
+			const data = (await res.json()) as { ok?: boolean; error?: string; fallback?: boolean };
+			if (!res.ok || data.fallback || !data.ok) {
+				this.syncStatus = 'offline';
+				this.syncError = data.error ?? 'Live save failed';
+				return;
+			}
+			this.state.source = source;
+			this.state.syncKey = this.session.workspaceKey;
+			this.state.updatedAt = new Date().toISOString();
+			this.syncStatus = 'live';
+			this.syncError = '';
+		} catch (error) {
+			this.syncStatus = 'offline';
+			this.syncError = error instanceof Error ? error.message : 'Live save failed';
+		}
+	}
+
+	private queueRemoteSync() {
+		if (!browser || !this.session || this.suppressSync) return;
+		if (this.syncTimer) clearTimeout(this.syncTimer);
+		this.syncTimer = setTimeout(() => {
+			this.syncTimer = null;
+			void this.pushRemote('live');
+		}, 1100);
+	}
+
+	private saveLocal() {
 		if (!browser) return;
 		try {
 			localStorage.setItem(KEY, JSON.stringify(this.state));
 		} catch {
 			/* storage full or blocked */
 		}
+	}
+
+	persist() {
+		this.saveLocal();
+		this.queueRemoteSync();
 	}
 
 	get user() {
@@ -126,7 +278,14 @@ class StudioStore {
 	}
 
 	logout() {
+		if (browser) {
+			void fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(() => undefined);
+		}
+		this.session = null;
+		this.syncStatus = 'mock';
 		this.state.user = null;
+		this.state.syncKey = undefined;
+		this.state.source = 'mock';
 		this.persist();
 	}
 

@@ -14,6 +14,8 @@ const demo = $derived(page.url.searchParams.get('demo') === '1');
 
 onMount(() => {
 	studio.init();
+	const queryError = page.url.searchParams.get('error');
+	if (queryError) error = decodeURIComponent(queryError);
 	if (demo) {
 		studio.login('amara@venn.co', 'Amara Venn', true);
 		goto('/app');
@@ -33,9 +35,8 @@ function submit(e: Event) {
 	}, 550);
 }
 
-function sso(provider: 'Google' | 'Microsoft') {
-	studio.login(provider === 'Google' ? 'amara@venn.co' : 'amara@venn.co', 'Amara Venn', false);
-	goto(studio.state.onboarded ? '/app' : '/onboarding');
+function sso(provider: 'Google' | 'GitHub') {
+	goto(provider === 'Google' ? '/api/auth/google' : '/api/auth/github');
 }
 </script>
 
@@ -88,7 +89,7 @@ function sso(provider: 'Google' | 'Microsoft') {
 			</a>
 			<p class="eyebrow">Workspace access</p>
 			<h1 class="mt-2 font-display text-[32px] leading-tight">Sign in to the studio.</h1>
-			<p class="mt-2 text-[13px] text-muted">Use your work account. This build runs locally — no credentials leave your browser.</p>
+			<p class="mt-2 text-[13px] text-muted">Sign in with Google or GitHub for the live Convex workspace. The email shortcut opens the local demo catalogue.</p>
 
 			<form class="mt-8 space-y-4" onsubmit={submit}>
 				<div>
@@ -114,15 +115,15 @@ function sso(provider: 'Google' | 'Microsoft') {
 					<svg width="15" height="15" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h5.9a5 5 0 0 1-2.2 3.3v2.7h3.6c2.1-1.9 3.2-4.8 3.2-8z"/><path fill="#34A853" d="M12 23c2.8 0 5.2-.9 7-2.5l-3.6-2.7c-1 .7-2.2 1.1-3.4 1.1-2.7 0-5-1.8-5.8-4.3H2.5v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M6.2 14.6a6.6 6.6 0 0 1 0-4.2V7.6H2.5a11 11 0 0 0 0 9.8z"/><path fill="#EA4335" d="M12 5.4c1.5 0 2.9.5 4 1.5l3-3A11 11 0 0 0 2.5 7.6l3.7 2.8C7 7.9 9.3 5.4 12 5.4z"/></svg>
 					Continue with Google
 				</button>
-				<button class="btn btn-secondary w-full" onclick={() => sso('Microsoft')}>
-					<svg width="14" height="14" viewBox="0 0 24 24"><path fill="#F25022" d="M1 1h10v10H1z"/><path fill="#7FBA00" d="M13 1h10v10H13z"/><path fill="#00A4EF" d="M1 13h10v10H1z"/><path fill="#FFB900" d="M13 13h10v10H13z"/></svg>
-					Continue with Microsoft
+				<button class="btn btn-secondary w-full" onclick={() => sso('GitHub')}>
+					<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .7a11.3 11.3 0 0 0-3.6 22c.6.1.8-.2.8-.5v-1.9c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.5-.3-5.2-1.3-5.2-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0C17 4.9 18 5.2 18 5.2c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.6 5.4-5.2 5.7.4.4.8 1.1.8 2.2v3.1c0 .3.2.6.8.5A11.3 11.3 0 0 0 12 .7z"/></svg>
+					Continue with GitHub
 				</button>
 			</div>
 
 			<div class="mt-6 rounded-xl border border-gold/20 bg-gold/[0.05] p-4">
 				<p class="flex items-center gap-2 text-[11.5px] font-medium text-gold"><Icon name="sparkles" size={14} /> Reviewer shortcut</p>
-				<p class="mt-1.5 text-[11px] leading-relaxed text-muted">Open the fully populated demo workspace with a 48k-word manuscript, series bible and live agent runs.</p>
+				<p class="mt-1.5 text-[11px] leading-relaxed text-muted">Explore the fully populated demo workspace with a 48k-word manuscript, series bible and live agent runs. It syncs to your live Convex workspace after OAuth sign-in.</p>
 				<button class="btn btn-secondary btn-sm mt-3 w-full" onclick={() => { studio.login('amara@venn.co', 'Amara Venn', true); goto('/app'); }}>Enter demo workspace</button>
 			</div>
 

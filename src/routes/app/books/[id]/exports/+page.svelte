@@ -2,6 +2,7 @@
 import { page } from '$app/state';
 import { studio } from '$lib/store.svelte';
 import { buildEpub, buildMarkdown, download, manuscriptHtml, printBook } from '$lib/export';
+import { archiveAsset } from '$lib/assets';
 import { startPipeline } from '$lib/pipeline';
 import Icon from '$lib/components/Icon.svelte';
 import BookCover from '$lib/components/BookCover.svelte';
@@ -29,6 +30,25 @@ async function doEpub() {
 		download(filename('epub'), blob, 'application/epub+zip');
 		exported.unshift({ name: filename('epub'), format: 'EPUB 3', at: new Date().toISOString(), size: `${Math.round(blob.size / 1024)} KB` });
 		studio.notify('EPUB 3 built and downloaded');
+	} finally {
+		busy = '';
+	}
+}
+
+async function archiveEpub() {
+	if (!book) return;
+	if (!studio.session) {
+		studio.notify('Sign in with Google or GitHub to archive to R2', 'error');
+		return;
+	}
+	busy = 'r2';
+	try {
+		const blob = await buildEpub(book);
+		const result = await archiveAsset(blob, filename('epub'));
+		studio.notify(`EPUB archived to R2 · ${Math.round(result.size / 1024)} KB`);
+		exported.unshift({ name: filename('epub'), format: 'R2 archive', at: new Date().toISOString(), size: `${Math.round(result.size / 1024)} KB` });
+	} catch (error) {
+		studio.notify(error instanceof Error ? error.message : 'R2 archive failed', 'error');
 	} finally {
 		busy = '';
 	}
@@ -68,6 +88,9 @@ function validate() {
 
 	<PageHeader eyebrow="Production" title="Ship a book, not a document." description={`${drafted} of ${book.chapters.length} chapters have prose. Assemble front matter, choose a package and download a validated EPUB, print-ready PDF or editable source.`}>
 		<button class="btn btn-secondary" onclick={validate}><Icon name="shield" size={14} /> Validate package</button>
+		<button class="btn btn-secondary" onclick={archiveEpub} disabled={busy === 'r2'}>
+			{#if busy === 'r2'}<Icon name="loader" size={14} class="animate-spin" /> Archiving…{:else}<Icon name="server" size={14} /> Archive EPUB to R2{/if}
+		</button>
 		<button class="btn btn-primary" onclick={doEpub} disabled={busy === 'epub'}>
 			{#if busy === 'epub'}<Icon name="loader" size={14} class="animate-spin" /> Building EPUB…{:else}<Icon name="download" size={14} /> Build EPUB 3{/if}
 		</button>

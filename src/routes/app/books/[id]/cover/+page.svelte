@@ -3,6 +3,7 @@ import { page } from '$app/state';
 import { studio } from '$lib/store.svelte';
 import { generateCover } from '$lib/engine';
 import { download } from '$lib/export';
+import { archiveAsset } from '$lib/assets';
 import BookCover from '$lib/components/BookCover.svelte';
 import Icon from '$lib/components/Icon.svelte';
 import PageHeader from '$lib/components/PageHeader.svelte';
@@ -32,8 +33,8 @@ function generate() {
 	studio.notify('New cover direction generated');
 }
 
-function downloadCover() {
-	if (!book) return;
+function coverHtml() {
+	if (!book) return '';
 	const c = book.cover;
 	const palette: Record<string, [string, string, string, string]> = {
 		midnight: ['#0d1420', '#1a2433', '#ece9e2', '#e0b872'],
@@ -63,8 +64,38 @@ ${c.typography === 'modern' ? 'h1{font-family:Helvetica,Arial,sans-serif;text-tr
 <div style="position:relative;margin-top:1.2in"><h1>${book.title}</h1><div class="sub">${book.subtitle}</div><div class="rule"></div></div>
 <div style="position:relative"><div class="author">${book.author}</div><div class="tag">${c.tagline}</div></div>
 </body></html>`;
+	return html;
+}
+
+function downloadCover() {
+	if (!book) return;
+	const html = coverHtml();
+	if (!html) return;
 	download(`${book.title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-cover.html`, html, 'text/html');
 	studio.notify('Cover package downloaded');
+}
+
+let archiving = $state(false);
+async function archiveCover() {
+	if (!book) return;
+	if (!studio.session) {
+		studio.notify('Sign in with Google or GitHub to archive to R2', 'error');
+		return;
+	}
+	const html = coverHtml();
+	if (!html) return;
+	archiving = true;
+	try {
+		const result = await archiveAsset(
+			new Blob([html], { type: 'text/html' }),
+			`${book.title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-cover.html`
+		);
+		studio.notify(`Cover archived to R2 · ${Math.round(result.size / 1024)} KB`);
+	} catch (error) {
+		studio.notify(error instanceof Error ? error.message : 'R2 archive failed', 'error');
+	} finally {
+		archiving = false;
+	}
 }
 </script>
 
@@ -74,6 +105,7 @@ ${c.typography === 'modern' ? 'h1{font-family:Helvetica,Arial,sans-serif;text-tr
 
 	<PageHeader eyebrow="Cover studio" title="The book as an object." description="Six palettes, six motif systems, four typographic directions. Every choice is applied to a real front, back and spine — not a flattened mockup.">
 		<button class="btn btn-secondary" onclick={downloadCover}><Icon name="download" size={14} /> Download cover</button>
+		<button class="btn btn-secondary" onclick={archiveCover} disabled={archiving}>{#if archiving}<Icon name="loader" size={14} class="animate-spin" /> Archiving…{:else}<Icon name="server" size={14} /> Archive to R2{/if}</button>
 		<button class="btn btn-primary" onclick={generate}><Icon name="sparkles" size={14} /> Generate direction</button>
 	</PageHeader>
 
